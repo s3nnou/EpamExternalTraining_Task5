@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28307.1062
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tree", "Tree\Tree.csproj", "{1E6CBB1E-70AF-41BF-AAF0-3DAE529B671F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Task 1", "Task 1", "{AA3E17F4-6F82-479C-A38E-1C52590F0277}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentLibrary", "StudentLibrary\StudentLibrary.csproj", "{CCC7590D-1D36-4AD9-8E29-E6C3FDEA55D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +19,17 @@ Global
 		{1E6CBB1E-70AF-41BF-AAF0-3DAE529B671F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E6CBB1E-70AF-41BF-AAF0-3DAE529B671F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E6CBB1E-70AF-41BF-AAF0-3DAE529B671F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCC7590D-1D36-4AD9-8E29-E6C3FDEA55D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCC7590D-1D36-4AD9-8E29-E6C3FDEA55D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCC7590D-1D36-4AD9-8E29-E6C3FDEA55D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCC7590D-1D36-4AD9-8E29-E6C3FDEA55D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1E6CBB1E-70AF-41BF-AAF0-3DAE529B671F} = {AA3E17F4-6F82-479C-A38E-1C52590F0277}
+		{CCC7590D-1D36-4AD9-8E29-E6C3FDEA55D6} = {AA3E17F4-6F82-479C-A38E-1C52590F0277}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {82AADD13-43DE-48CE-B72E-2B44946E8136}
