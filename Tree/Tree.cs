@@ -2,17 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Tree
+namespace TreeClass
 {
     [Serializable]
     /// <summary>
     /// This is a class for a binary tree
     /// </summary>
     /// <typeparam name="T">Type is everything that can be compared</typeparam>
-    class Tree<T> where T : IComparable<T>
+    public class Tree<T> where T : Student
     {
         /// <summary>
         /// Node to store a Root of a Tree
@@ -22,7 +23,7 @@ namespace Tree
         /// <summary>
         /// List for balancing
         /// </summary>
-        private List<Node<T>> NodesList { get; set; }
+        private List<Node<T>> NodesList = new List<Node<T>>();
 
         /// <summary>
         /// Method to Adding a new Node to a Tree
@@ -40,7 +41,7 @@ namespace Tree
                 {
                     parentNode = currNode;
 
-                    if (currNode.Data.CompareTo(value) == 1)
+                    if (currNode.Data.CompareTo(value) > 1)
                     {
                         currNode = currNode.Left;
                     }
@@ -48,20 +49,20 @@ namespace Tree
                     {
                         throw new ArgumentException("There are equal data");
                     }
-                    else if(currNode.Data.CompareTo(value) == -1)
+                    else if(currNode.Data.CompareTo(value) < -1)
                     {
                         currNode = currNode.Left;
                     }
                 }
 
-                if (parentNode.Data.CompareTo(value) == 1)
+                if (parentNode.Data.CompareTo(value) > 1)
                 {
-                    parentNode = currNode.Left;
+                    parentNode.Left = newNode;
 
                 }
                 else
                 {
-                    parentNode  = currNode.Left;
+                    parentNode.Right = newNode;
                 }
 
             }
@@ -71,21 +72,86 @@ namespace Tree
             }
         }
 
+        ///// <summary>
+        ///// Method for a node finding
+        ///// </summary>
+        ///// <param name="value"></param>
+        ///// <returns>node</returns>
+        private Node<T> Find(T value)
+        {
+            return this.Find(value, this.Root);
+        }
+
+        /// <summary>
+        /// Method for finding data in a tree
+        /// </summary>
+        /// <param name="value">data to find</param>
+        /// <returns>found data</returns>
+        public T FindData(T value)
+        {
+            Node<T> node = this.Find(value, this.Root);
+            return node.Data;
+        }
+
+        /// <summary>
+        /// Method for a navigation in a tree
+        /// </summary>
+        /// <param name="value">what to find</param>
+        /// <param name="parent">where to find</param>
+        /// <returns>found node</returns>
+        private Node<T> Find(T value, Node<T> parent)
+        {
+            if (parent != null)
+            {
+
+                if (parent.Data.CompareTo(value) > 1)
+                {
+                    return Find(value, parent.Right);
+
+                }
+                else if (parent.Data.CompareTo(value) == 0)
+                {
+                    return parent;
+
+                }
+
+                else if (parent.Data.CompareTo(value) < -1)
+                {
+
+                    return Find(value, parent.Left);
+
+                }
+
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Method for a node data replacment
+        /// </summary>
+        /// <param name="originalValue">data to replace</param>
+        /// <param name="newValue">new data</param>
+        public void Replace(T originalValue, T newValue)
+        {
+            Node<T> nodeToReplace = Find(originalValue);
+            if (nodeToReplace != null)
+            {
+                Node<T> newNode = new Node<T>(newValue);
+
+                nodeToReplace.Data = newNode.Data;
+            }
+            else
+            {
+                throw new ArgumentNullException("There are no such value");
+            }
+        }
 
         /// <summary>
         /// Method for a Tree Balancing
         /// </summary>
         public void Balance()
         {
-            void ConvertTreeToList(Node<T> parent)
-            {
-                if(parent != null)
-                {
-                    ConvertTreeToList(parent.Left);
-                    NodesList.Add(parent);
-                    ConvertTreeToList(parent.Right);
-                }
-            }
 
             Node<T> NewParentCreation(List<Node<T>> nodes, int start, int finish)
             {
@@ -95,7 +161,7 @@ namespace Tree
                 }
 
                 int middle = (start + finish) / 2;
-                Node<T> newParent= nodes[middle];
+                Node<T> newParent = nodes[middle];
 
                 newParent.Left = NewParentCreation(nodes, start, middle - 1);
                 newParent.Right = NewParentCreation(nodes, middle + 1, finish);
@@ -103,9 +169,12 @@ namespace Tree
                 return newParent;
             }
 
-            ConvertTreeToList(Root);
+            if (this.NodesList.Count() == 0)
+            {
+                ConvertTreeToList(Root);
+            }
 
-            int newStart = NodesList.Count - ((NodesList.Count - 1) / 2);
+            int newStart = NodesList.Count - ((NodesList.Count) / 2);
 
             Node<T> newRoot = NodesList[newStart];
 
@@ -113,7 +182,22 @@ namespace Tree
             newRoot.Right = NewParentCreation(NodesList, newStart + 1, NodesList.Count - 1);
 
             Root = newRoot;
-        } 
+
+        }
+
+        /// <summary>
+        /// Utility Method for a tree conversion into the list of nodes
+        /// </summary>
+        /// <param name="parent">node to start</param>
+        private void ConvertTreeToList(Node<T> parent)
+        {
+            if (parent != null)
+            {
+                ConvertTreeToList(parent.Left);
+                NodesList.Add(parent);
+                ConvertTreeToList(parent.Right);
+            }
+        }
 
         /// <summary>
         /// Method for a serialization
@@ -121,10 +205,15 @@ namespace Tree
         /// <param name="path">Output file path</param>
         public void Serialize(string path)
         {
-            using(TextWriter writer = new StreamWriter(path))
+            using (FileStream fs = new FileStream(path, FileMode.Create))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(Tree<T>));
-                serializer.Serialize(writer, this);
+                if (this.NodesList.Count() == 0)
+                {
+                    ConvertTreeToList(Root);
+                }
+
+                XmlSerializer serializer = new XmlSerializer(typeof(List<T>));
+                serializer.Serialize(fs, ToList());
             }
         }
 
@@ -133,17 +222,121 @@ namespace Tree
         /// </summary>
         /// <param name="path">Input File path</param>
         /// <returns>new tree</returns>
-        public Tree<T> Deserialize(string path)
+        public void Deserialize(string path)
         {
-            Tree<T> binaryTree;
+            List<T> students;
 
             using (Stream reader = new FileStream(path, FileMode.Open))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(Tree<T>));
-                binaryTree = (Tree<T>)serializer.Deserialize(reader);
+                XmlSerializer serializer = new XmlSerializer(typeof(List<T>));
+                students = (List<T>)serializer.Deserialize(reader);
             }
 
-            return binaryTree;
+            Root = null;
+            NodesList.Clear();
+
+            foreach (var item in students)
+            {
+                Add(item);
+            };
+        }
+
+        /// <summary>
+        /// Converts Tree to a List<T>
+        /// </summary>
+        /// <returns>List<T></returns>
+        public List<T> ToList()
+        {
+            if(this.NodesList.Count() == 0)
+            {
+                this.ConvertTreeToList(this.Root);
+            }
+
+            List<T> newList = new List<T>();
+            foreach(var item in NodesList)
+            {
+                newList.Add(item.Data);
+            }
+
+            return newList;
+        }
+
+        /// <summary>
+        /// Method for Student objects class comparasion
+        /// </summary>
+        /// <param name="obj">Object to compare</param>
+        /// <returns>true if equal, false is not</returns>
+        public override bool Equals(object obj)
+        {
+            
+            if (obj is Tree<T>)
+            {
+                Tree<T> tree = obj as Tree<T>;
+
+                tree.ConvertTreeToList(tree.Root);
+
+                if (this.NodesList.Count() == 0)
+                {
+                    this.ConvertTreeToList(this.Root);
+                }
+
+                if (tree.NodesList.Count == this.NodesList.Count)
+                {
+                    for(int i = 0; i < NodesList.Count; i++)
+                    {
+                        if (!tree.NodesList[i].Equals(this.NodesList[i]))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Calculates HashCode
+        /// </summary>
+        /// <returns>HashCode</returns>
+        public override int GetHashCode()
+        {
+            if (this.NodesList.Count() == 0)
+            {
+                this.ConvertTreeToList(this.Root);
+            }
+
+            return Root.GetHashCode() ^ NodesList.GetHashCode() ^ NodesList.Count.GetHashCode() ^ NodesList.Select(obj => obj.GetHashCode()).Sum();
+        }
+
+        /// <summary>
+        /// Returns Student data in a text format
+        /// </summary>
+        /// <returns>text</returns>
+        public override string ToString()
+        {
+            if (this.NodesList.Count() == 0)
+            {
+                this.ConvertTreeToList(this.Root);
+            }
+
+            var stringBuilder = new StringBuilder();
+
+            foreach (Node<T> node in NodesList)
+            {
+                stringBuilder.Append(node.Data.ToString());
+                stringBuilder.Append("\n");
+            }
+
+            return stringBuilder.ToString();
         }
     }
 }

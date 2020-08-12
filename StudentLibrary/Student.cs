@@ -27,6 +27,29 @@ namespace StudentLibrary
         /// </summary>
        DateTime Date { get; set; }
 
+
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="name">Studnet name</param>
+        /// <param name="test">Test name</param>
+        /// <param name="result">Test result</param>
+        /// <param name="date">Test date</param>
+        public Student(string name, string test, UInt16 result, DateTime date)
+        {
+            Name = name;
+            Test = test;
+            Result = result;
+            Date = date;
+        }
+
+        /// <summary>
+        /// Parameterless constructor
+        /// </summary>
+        public Student()
+        {
+
+        }
         /// <summary>
         /// Method for Student objects class comparasion
         /// </summary>
@@ -73,7 +96,7 @@ namespace StudentLibrary
         }
 
         /// <summary>
-        /// Returns Student data in a text format
+        /// Returns Student's data in a text format
         /// </summary>
         /// <returns>text</returns>
         public override string ToString()

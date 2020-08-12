@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ArrayOfStudent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Student>
+    <Name>Test</Name>
+    <Test>Math</Test>
+    <Result>35</Result>
+  </Student>
+  <Student>
+    <Name>Test</Name>
+    <Test>Math</Test>
+    <Result>54</Result>
+  </Student>
+</ArrayOfStudent>
